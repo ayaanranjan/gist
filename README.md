@@ -33,3 +33,33 @@ I also want to be careful with the reward system, because I do not want the AI t
 This project is about more than just generating questions. It is about testing which tutoring strategy helps students improve the fastest and most effectively.
 
 The broader goal is to explore how adaptive learning systems can make math tutoring more personalized by responding to student progress in a smarter way.
+
+## Method v1
+
+Week 4 of the project is a first working version of the tutor. This version uses a rule-based system instead of bandits or Q-learning.
+
+The tutor follows simple adaptation rules:
+
+- if a student gets 3 questions correct in a row, move up difficulty
+- if a student gets 2 wrong, move down and review
+- otherwise, stay near the current difficulty level
+
+The current implementation uses simulated students:
+
+- a fast learner
+- a struggling learner
+- an uneven learner
+
+For each student, the simulation tracks:
+
+- starting mastery
+- ending mastery
+- learning gain
+- success rate
+- questions to mastery
+
+## Run
+
+```bash
+python3 method_v1.py
+```
