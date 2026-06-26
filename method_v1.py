@@ -14,6 +14,7 @@ DIFFICULTIES = ["easy", "medium", "hard"]
 
 @dataclass
 class StudentProfile:
+    # This stores the student's starting ability and how quickly they learn.
     name: str
     skill_by_difficulty: Dict[str, float]
     learning_rate: float
@@ -56,6 +57,7 @@ class StudentProfile:
 
 @dataclass
 class TutorState:
+    # The tutor keeps track of difficulty, streaks, and the session history.
     difficulty_index: int = 1
     correct_streak: int = 0
     wrong_streak: int = 0
@@ -70,11 +72,13 @@ class RuleBasedTutor:
     """Simple hand-written adaptation rules for Method v1."""
 
     def choose_difficulty(self, state: TutorState) -> str:
+        # If the student is struggling, temporarily fall back to an easier question.
         if state.wrong_streak >= 2:
             return "easy"
         return state.current_difficulty
 
     def update_state(self, state: TutorState, was_correct: bool) -> None:
+        # Three correct answers in a row moves the student up.
         if was_correct:
             state.correct_streak += 1
             state.wrong_streak = 0
@@ -82,6 +86,7 @@ class RuleBasedTutor:
                 state.difficulty_index += 1
                 state.correct_streak = 0
         else:
+            # Repeated errors move the student down and reset the streak.
             state.wrong_streak += 1
             state.correct_streak = 0
             if state.wrong_streak >= 2 and state.difficulty_index > 0:
@@ -100,6 +105,7 @@ def simulate_session(
     starting_mastery = student.mastery_score()
     mastery_step: Optional[int] = None
 
+    # Each step is one tutor decision followed by one student response.
     for step in range(1, max_questions + 1):
         difficulty = tutor.choose_difficulty(state)
         probability = student.answer_probability(difficulty)
@@ -108,6 +114,7 @@ def simulate_session(
         tutor.update_state(state, correct)
 
         mastery = student.mastery_score()
+        # Save the session so we can inspect how the tutor adapted over time.
         state.history.append(
             {
                 "step": step,
@@ -134,6 +141,7 @@ def simulate_session(
 
 
 def build_students() -> List[StudentProfile]:
+    # These are the three example learner types used in the simulation.
     return [
         StudentProfile(
             name="fast_learner",
@@ -154,6 +162,7 @@ def build_students() -> List[StudentProfile]:
 
 
 def print_summary(result: Dict[str, object]) -> None:
+    # Print a short summary that is easy to discuss in a meeting.
     print(f"Student: {result['student']}")
     print(f"  Starting mastery: {result['starting_mastery']}")
     print(f"  Ending mastery:   {result['ending_mastery']}")
@@ -176,6 +185,7 @@ def print_summary(result: Dict[str, object]) -> None:
 
 
 def main() -> None:
+    # Run the same tutor on each simulated student profile.
     tutor = RuleBasedTutor()
     students = build_students()
 
