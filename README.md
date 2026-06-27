@@ -63,3 +63,7 @@ For each student, the simulation tracks:
 ```bash
 python3 method_v1.py
 ```
+
+## Project Notes
+
+- [Literature Map](./literature_map.md)
